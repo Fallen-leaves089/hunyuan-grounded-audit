@@ -106,9 +106,11 @@ python -B scripts/verify_package.py
 python -B -m unittest discover -s tests -p "test_*.py"
 ```
 
-## 适配状态
+以上命令是确定性检查：只验证包结构、安装器、记录器、安全边界和文档契约，不调用真实模型或宿主。它们全部通过，不等于模型行为已验证。
 
-**documented**：按腾讯云官方 CodeBuddy Code 文档和腾讯混元公开模型卡核对，尚未在真实 CodeBuddy Code 环境中验证技能发现、显式/自动调用、`/skills`、工作区信任、Plan 模式、子代理、hooks 和工具权限。没有运行证据时，不声称 `validated`。
+## 验证边界与适配状态
+
+**documented**：按腾讯云官方 CodeBuddy Code 文档和腾讯混元公开模型卡核对，尚未在真实 CodeBuddy Code 环境中验证技能发现、显式/自动调用、`/skills`、工作区信任、Plan 模式、子代理、hooks 和工具权限。真实模型行为须按 `tests/model-evals/README.md` 在目标宿主和模型上人工评测，并记录模型、宿主、权限模式、日期、结果、证据和未覆盖项；此类评测不进入默认 CI，也不作为发布闸门。没有运行证据时，不声称 `validated`。
 
 ## 反馈
 
