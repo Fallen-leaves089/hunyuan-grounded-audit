@@ -1,5 +1,6 @@
 # hunyuan-grounded-audit
 
+[![Release](https://img.shields.io/github/v/release/Fallen-leaves089/hunyuan-grounded-audit?label=release)](https://github.com/Fallen-leaves089/hunyuan-grounded-audit/releases/latest)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Audit: read-only](https://img.shields.io/badge/audit-read--only-informational.svg)](SKILL.md)
 [![Adapter: CodeBuddy Code + Tencent Hunyuan](https://img.shields.io/badge/adapter-CodeBuddy%20Code%20%2B%20Tencent%20Hunyuan-blueviolet.svg)](hosts/codebuddy-code.md)
