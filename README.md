@@ -15,6 +15,7 @@ CodeBuddy Code + 腾讯混元的证据优先项目健康审计技能。本项目
 | 分发仓库 | `hunyuan-grounded-audit` |
 | 宿主 | CodeBuddy Code |
 | 模型 | 腾讯混元 |
+| 适配范围 | 宿主 + 模型专项 |
 | 技能名 | `project-health-audit` |
 | 调用入口 | `/project-health-audit` |
 | 适配证据 | `documented` |
