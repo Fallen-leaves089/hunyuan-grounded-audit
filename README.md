@@ -1,6 +1,25 @@
 # hunyuan-grounded-audit
 
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Audit: read-only](https://img.shields.io/badge/audit-read--only-informational.svg)](SKILL.md)
+[![Adapter: CodeBuddy Code + Tencent Hunyuan](https://img.shields.io/badge/adapter-CodeBuddy%20Code%20%2B%20Tencent%20Hunyuan-blueviolet.svg)](hosts/codebuddy-code.md)
+[![Validation: documented](https://img.shields.io/badge/validation-documented-lightgrey.svg)](tests/model-evals/README.md)
+[![Model behavior: unverified](https://img.shields.io/badge/model%20behavior-unverified-orange.svg)](tests/model-evals/README.md)
+
 CodeBuddy Code + 腾讯混元的证据优先项目健康审计技能。本项目是 `grounded-audit` 理念的独立拆分，只包含当前宿主与模型补偿，不依赖其他适配项目，也不沿用原项目的非商业许可或避坑语料。
+
+## 适配标签
+
+| 标签 | 值 |
+|---|---|
+| 分发仓库 | `hunyuan-grounded-audit` |
+| 宿主 | CodeBuddy Code |
+| 模型 | 腾讯混元 |
+| 技能名 | `project-health-audit` |
+| 调用入口 | `/project-health-audit` |
+| 适配证据 | `documented` |
+| 模型行为 | 未验证 |
+| 许可 | Apache-2.0 |
 
 ## 名字与调用
 
