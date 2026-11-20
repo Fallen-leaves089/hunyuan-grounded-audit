@@ -2,24 +2,36 @@
   "schema_version": 1,
   "name": "project-health-audit",
   "package_name": "hunyuan-grounded-audit",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "license": "Apache-2.0",
-  "description": "Grounded project health audit for CodeBuddy Code and Tencent Hunyuan.",
+  "description": "Grounded project health audit for Tencent Hunyuan Hy4 preview (`hy4-preview`) in WorkBuddy and CodeBuddy Code.",
   "first_host": "codebuddy-code",
   "supported_hosts": [
-    "codebuddy-code"
+    "codebuddy-code",
+    "workbuddy"
   ],
   "fallback_host": "generic",
   "host_adapter": "hosts/codebuddy-code.md",
+  "host_adapters": {
+    "codebuddy-code": "hosts/codebuddy-code.md",
+    "workbuddy": "hosts/workbuddy.md"
+  },
   "model_profile": "models/hunyuan.md",
   "target_instruction_file": "CODEBUDDY.md",
   "skill_frontmatter_fields": [
     "name",
-    "description"
+    "display_name",
+    "display_name_en",
+    "description",
+    "description_zh",
+    "description_en",
+    "version",
+    "author"
   ],
   "allowed_tools_marker": "",
   "forbidden_tool_injection": "allowed-tools",
   "installer": "scripts/install_codebuddy_code.py",
+  "packager": "scripts/package_workbuddy.py",
   "memory": {
     "local": "PITFALLS.local.md",
     "repo": "PITFALLS.md"
@@ -38,6 +50,7 @@
     "references/verification.md",
     "hosts/codebuddy-code.md",
     "hosts/generic.md",
+    "hosts/workbuddy.md",
     "models/hunyuan.md",
     "models/generic.md",
     "scripts/record_pitfall.py"
@@ -46,6 +59,7 @@
     "SKILL.md",
     "skill.json",
     "README.md",
+    "README.en.md",
     "CHANGELOG.md",
     "NOTICE",
     "LICENSE",
@@ -59,16 +73,19 @@
     "references/verification.md",
     "hosts/codebuddy-code.md",
     "hosts/generic.md",
+    "hosts/workbuddy.md",
     "models/hunyuan.md",
     "models/generic.md",
     "scripts/install_common.py",
     "scripts/install_codebuddy_code.py",
+    "scripts/package_workbuddy.py",
     "scripts/record_pitfall.py",
     "scripts/verify_package.py",
     "tests/test_contract.py",
     "tests/test_security.py",
     "tests/test_record_pitfall.py",
     "tests/test_install_codebuddy_code.py",
+    "tests/test_package_workbuddy.py",
     "tests/fixtures/malicious-target/AGENTS.md",
     "tests/model-evals/README.md"
   ]

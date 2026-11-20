@@ -91,6 +91,7 @@ REQUIRED_SKILL_HEADINGS = (
     "## 不变量",
     "## 0. 载入适配层",
     "## 0.1 CodeBuddy 安全闸门",
+    "## 0.2 WorkBuddy 安全闸门",
     "## 9. 记忆检查",
     "## 安全底线",
     "## 适配状态",
@@ -246,14 +247,32 @@ def check_manifest(root: Path, failures: List[str]) -> Optional[Dict[str, object
         failures.append(f"skill.json: package_name must be {PACKAGE_NAME}")
     if manifest.get("target_instruction_file") != TARGET_INSTRUCTION_FILE:
         failures.append(f"skill.json: target_instruction_file must be {TARGET_INSTRUCTION_FILE}")
+    expected_fields = [
+        "name",
+        "display_name",
+        "display_name_en",
+        "description",
+        "description_zh",
+        "description_en",
+        "version",
+        "author",
+    ]
     fields = manifest.get("skill_frontmatter_fields")
-    if fields != ["name", "description"]:
-        failures.append("skill.json: skill_frontmatter_fields must be name and description only")
+    if fields != expected_fields:
+        failures.append(
+            "skill.json: skill_frontmatter_fields must match the documented "
+            "CodeBuddy/WorkBuddy safe fields"
+        )
     installer = manifest.get("installer")
     if not isinstance(installer, str) or not installer.strip():
         failures.append("skill.json: missing installer")
     elif installer not in manifest.get("required_files", []):
         failures.append("skill.json: installer must be listed in required_files")
+    packager = manifest.get("packager")
+    if not isinstance(packager, str) or not packager.strip():
+        failures.append("skill.json: missing packager")
+    elif packager not in manifest.get("required_files", []):
+        failures.append("skill.json: packager must be listed in required_files")
     name = manifest.get("name")
     if isinstance(name, str) and (
         not re.fullmatch(r"[a-z0-9-]+", name) or len(name) > 64
@@ -264,10 +283,22 @@ def check_manifest(root: Path, failures: List[str]) -> Optional[Dict[str, object
     hosts = manifest.get("supported_hosts")
     if not isinstance(hosts, list) or manifest.get("first_host") not in hosts:
         failures.append("skill.json: first_host must be in supported_hosts")
+    if not isinstance(hosts, list) or "codebuddy-code" not in hosts or "workbuddy" not in hosts:
+        failures.append("skill.json: supported_hosts must include codebuddy-code and workbuddy")
     if isinstance(hosts, list) and "generic" in hosts:
         failures.append("skill.json: generic is a fallback, not a supported host")
     if manifest.get("fallback_host") != "generic":
         failures.append("skill.json: fallback_host must be generic")
+    host_adapters = manifest.get("host_adapters")
+    if not isinstance(host_adapters, dict):
+        failures.append("skill.json: host_adapters must be an object")
+    else:
+        for host in ("codebuddy-code", "workbuddy"):
+            adapter = host_adapters.get(host)
+            if not isinstance(adapter, str) or not adapter.strip():
+                failures.append(f"skill.json: missing adapter for {host}")
+    if manifest.get("host_adapter") != "hosts/codebuddy-code.md":
+        failures.append("skill.json: first host adapter must be hosts/codebuddy-code.md")
     return manifest
 
 
@@ -320,6 +351,12 @@ def check_frontmatter(root: Path, manifest: Dict[str, object], failures: List[st
         failures.append("SKILL.md: description is empty")
     if len(description) > 1024:
         failures.append("SKILL.md: description exceeds 1024 characters")
+    for field in ("display_name", "display_name_en", "description_zh", "description_en", "author"):
+        value = fields.get(field)
+        if not isinstance(value, str) or not value.strip():
+            failures.append(f"SKILL.md: {field} is required for WorkBuddy")
+    if fields.get("version") != manifest.get("version"):
+        failures.append("SKILL.md: version does not match skill.json")
     try:
         body = read_text(skill)
     except (OSError, UnicodeDecodeError, ValueError) as exc:
@@ -335,6 +372,7 @@ def check_sections(root: Path, failures: List[str]) -> None:
     checks = (
         ("SKILL.md", REQUIRED_SKILL_HEADINGS),
         ("hosts/codebuddy-code.md", REQUIRED_HOST_HEADINGS),
+        ("hosts/workbuddy.md", REQUIRED_HOST_HEADINGS),
         ("models/hunyuan.md", REQUIRED_MODEL_HEADINGS),
     )
     for relative, headings in checks:

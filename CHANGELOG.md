@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0 - 2026-11-20
+
+- Align the model profile with Tencent's official Hy4 preview (`hy4-preview`) and restrict HY4-specific compensation to the documented long-thinking and excessive self-verification limitation.
+- Explicitly isolate historical HY3 observations and model-neutral audit risks from HY4 conclusions; version changes require new evidence.
+- Add WorkBuddy as a second supported host, including upload/package guidance, project-level `.codebuddy/skills/`, default-permission boundaries, workspace context, memory, connectors, and unverified items.
+- Add `scripts/package_workbuddy.py` and contract/packaging tests for a deterministic upload archive rooted at `project-health-audit/`.
+- Clarify the license boundary: the related `project-health` main project remains noncommercial, while this ecosystem skill is fully open source under Apache-2.0.
+- Simplify the feedback request to the problem encountered, the model used, and the shell/host used.
+
 ## 0.1.1 - 2026-11-18
 
 - Standardize host/model-specific repository metadata, README labels, and release packaging.

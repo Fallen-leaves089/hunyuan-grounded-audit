@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 PACKAGE_NAME = "hunyuan-grounded-audit"
 SKILL_NAME = "project-health-audit"
-HUMAN_FILES = ("README.md", "CHANGELOG.md", "LICENSE", "NOTICE")
+HUMAN_FILES = ("README.md", "README.en.md", "CHANGELOG.md", "LICENSE", "NOTICE")
 
 
 class InstallError(RuntimeError):

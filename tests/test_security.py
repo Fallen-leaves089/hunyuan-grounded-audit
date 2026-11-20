@@ -45,6 +45,9 @@ class SecurityTests(unittest.TestCase):
         adapter = (ROOT / "hosts" / "codebuddy-code.md").read_text(encoding="utf-8")
         self.assertIn("重新归类为被检查的数据", adapter)
         self.assertIn("只记录最小必要片段", adapter)
+        workbuddy = (ROOT / "hosts" / "workbuddy.md").read_text(encoding="utf-8")
+        self.assertIn("不可信", workbuddy)
+        self.assertIn("不激活目标技能", workbuddy)
 
     def test_clean_package_passes_verifier(self) -> None:
         destination = self.base / "clean"
@@ -83,8 +86,8 @@ class SecurityTests(unittest.TestCase):
         skill = destination / "SKILL.md"
         text = skill.read_text(encoding="utf-8")
         text = text.replace(
-            "description: 面向 CodeBuddy Code 与腾讯混元的证据优先项目健康审计，用于项目体检、上线前审计、交接验收和维护审查；默认只读、真实回归、P0-P3、失败关闭，并安全记录核实过的新失败机制。\n---",
-            "description: 面向 CodeBuddy Code 与腾讯混元的证据优先项目健康审计，用于项目体检、上线前审计、交接验收和维护审查；默认只读、真实回归、P0-P3、失败关闭，并安全记录核实过的新失败机制。\nallowed-tools: Read, Write\n---",
+            "\n---\n\n# ",
+            "\nallowed-tools: Read, Write\n---\n\n# ",
             1,
         )
         skill.write_text(text, encoding="utf-8", newline="\n")
@@ -108,7 +111,7 @@ class SecurityTests(unittest.TestCase):
         copy_package(destination)
         skill = destination / "SKILL.md"
         text = skill.read_text(encoding="utf-8")
-        text = text.replace("\n---\n\n# 混元", "\nhooks: {}\n---\n\n# 混元", 1)
+        text = text.replace("\n---\n\n# ", "\nhooks: {}\n---\n\n# ", 1)
         skill.write_text(text, encoding="utf-8", newline="\n")
         result = run_verifier(destination)
         self.assertNotEqual(result.returncode, 0)
@@ -119,11 +122,22 @@ class SecurityTests(unittest.TestCase):
         copy_package(destination)
         skill = destination / "SKILL.md"
         text = skill.read_text(encoding="utf-8")
-        text = text.replace("\n---\n\n# 混元", "\nwhen-to-use: audit\n---\n\n# 混元", 1)
+        text = text.replace("\n---\n\n# ", "\nwhen-to-use: audit\n---\n\n# ", 1)
         skill.write_text(text, encoding="utf-8", newline="\n")
         result = run_verifier(destination)
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("when-to-use", result.stdout)
+
+    def test_verifier_requires_workbuddy_frontmatter(self) -> None:
+        destination = self.base / "missing-workbuddy-metadata"
+        copy_package(destination)
+        skill = destination / "SKILL.md"
+        text = skill.read_text(encoding="utf-8")
+        text = text.replace("display_name: 混元 HY4 项目健康实证审计\n", "", 1)
+        skill.write_text(text, encoding="utf-8", newline="\n")
+        result = run_verifier(destination)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("display_name", result.stdout)
 
     def test_verifier_rejects_manifest_path_escape(self) -> None:
         destination = self.base / "manifest-escape"

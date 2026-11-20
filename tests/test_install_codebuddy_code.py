@@ -53,7 +53,9 @@ class InstallerTests(unittest.TestCase):
             destination = project / ".codebuddy" / "skills" / SKILL_NAME
             self.assertTrue((destination / "SKILL.md").is_file())
             self.assertTrue((destination / "hosts" / "codebuddy-code.md").is_file())
+            self.assertTrue((destination / "hosts" / "workbuddy.md").is_file())
             self.assertTrue((destination / "models" / "hunyuan.md").is_file())
+            self.assertTrue((destination / "README.en.md").is_file())
             self.assertTrue((destination / "LICENSE").is_file())
             self.assertFalse((destination / ".git").exists())
             self.assertFalse((destination / "tests").exists())

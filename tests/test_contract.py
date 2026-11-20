@@ -20,18 +20,38 @@ class ContractTests(unittest.TestCase):
         self.assertEqual(MANIFEST["package_name"], "hunyuan-grounded-audit")
         self.assertEqual(MANIFEST["license"], "Apache-2.0")
         self.assertEqual(MANIFEST["first_host"], "codebuddy-code")
-        self.assertEqual(MANIFEST["supported_hosts"], ["codebuddy-code"])
+        self.assertEqual(MANIFEST["supported_hosts"], ["codebuddy-code", "workbuddy"])
         self.assertEqual(MANIFEST["host_adapter"], "hosts/codebuddy-code.md")
+        self.assertEqual(
+            MANIFEST["host_adapters"],
+            {
+                "codebuddy-code": "hosts/codebuddy-code.md",
+                "workbuddy": "hosts/workbuddy.md",
+            },
+        )
         self.assertEqual(MANIFEST["model_profile"], "models/hunyuan.md")
         self.assertEqual(MANIFEST["target_instruction_file"], "CODEBUDDY.md")
         self.assertEqual(MANIFEST["installer"], "scripts/install_codebuddy_code.py")
+        self.assertEqual(MANIFEST["packager"], "scripts/package_workbuddy.py")
 
     def test_frontmatter_uses_only_documented_fields(self) -> None:
         text = read("SKILL.md")
         lines = text.splitlines()
         self.assertEqual(lines[0].strip(), "---")
         self.assertIn("name: project-health-audit", lines)
-        self.assertEqual(MANIFEST["skill_frontmatter_fields"], ["name", "description"])
+        self.assertEqual(
+            MANIFEST["skill_frontmatter_fields"],
+            [
+                "name",
+                "display_name",
+                "display_name_en",
+                "description",
+                "description_zh",
+                "description_en",
+                "version",
+                "author",
+            ],
+        )
         parts = text.split("---", 2)
         self.assertEqual(len(parts), 3)
         frontmatter = parts[1]
@@ -63,27 +83,30 @@ class ContractTests(unittest.TestCase):
         self.assertIn("显式调用：`/project-health-audit`", read("SKILL.md"))
 
     def test_host_adapter_contract(self) -> None:
-        text = read(MANIFEST["host_adapter"])
-        for heading in (
-            "## 识别",
-            "## 安装位置",
-            "## 工具映射",
-            "## 权限边界",
-            "## 上下文",
-            "## 目标文件",
-            "## 网络与写入",
-            "## 未验证项",
-            "## 自检清单",
-        ):
-            self.assertIn(heading, text)
-        for marker in (
-            "不可信",
-            "不是独立的完全只读模式",
-            "才阻断",
-            "项目级技能优先",
-            "未验证",
-        ):
-            self.assertIn(marker, text)
+        for relative in MANIFEST["host_adapters"].values():
+            text = read(relative)
+            for heading in (
+                "## 识别",
+                "## 安装位置",
+                "## 调用与生命周期",
+                "## 工具映射",
+                "## 权限边界",
+                "## 上下文",
+                "## 目标文件",
+                "## 网络与写入",
+                "## 记忆标签",
+                "## 未验证项",
+                "## 自检清单",
+            ):
+                self.assertIn(heading, text, relative)
+            for marker in (
+                "不可信",
+                "不是独立的完全只读模式",
+                "才阻断",
+                "项目级技能优先",
+                "未验证",
+            ):
+                self.assertIn(marker, text, relative)
 
     def test_model_profile_contract(self) -> None:
         text = read(MANIFEST["model_profile"])
@@ -97,25 +120,41 @@ class ContractTests(unittest.TestCase):
             self.assertIn(heading, text)
         self.assertIn("### HY1", text)
         self.assertIn("### HY10", text)
-        self.assertIn("Plan 模式", text)
+        self.assertIn("### HY11", text)
+        self.assertIn("CodeBuddy Plan", text)
         self.assertIn("目标技能", text)
-        self.assertIn("192K", text)
+        self.assertIn("Hy4 preview", text)
+        self.assertIn("hy4-preview", text)
+        self.assertIn("1M", text)
+        self.assertIn("过度自我验证", text)
+        self.assertIn("HY4 官方已知限制", text)
+        self.assertIn("通用审计风险（非 HY4 版本缺陷）", text)
+        self.assertIn("不得自动继承", text)
+        self.assertIn("不是 HY3 版本号", text)
+        self.assertIn("HY3", text)
+        self.assertNotIn("192K", text)
 
     def test_feedback_address_is_documented(self) -> None:
         address = "chenshuidelaye@qq.com"
         self.assertIn(address, read("README.md"))
         self.assertIn(address, read(MANIFEST["model_profile"]))
+        feedback = read(MANIFEST["model_profile"]).split("## 反馈", 1)[1]
+        for marker in ("你遇到的问题", "使用的模型", "使用的壳/宿主"):
+            self.assertIn(marker, feedback)
 
     def test_validation_boundary_is_explicit(self) -> None:
-        readme = read("README.md")
-        for marker in (
-            "## 验证边界与适配状态",
-            "确定性检查",
-            "不调用真实模型",
-            "不等于模型行为已验证",
-            "tests/model-evals/README.md",
-        ):
-            self.assertIn(marker, readme)
+        for relative in ("README.md", "README.en.md"):
+            readme = read(relative)
+            for marker in (
+                "## 验证边界与适配状态" if relative == "README.md" else "## Validation boundary and adaptation status",
+                "确定性检查" if relative == "README.md" else "deterministic checks",
+                "不调用真实模型" if relative == "README.md" else "without calling a real model",
+                "不等于模型行为已验证" if relative == "README.md" else "does not mean model behavior has been validated",
+                "tests/model-evals/README.md",
+                "WorkBuddy",
+                "hy4-preview" if relative == "README.en.md" else "Hy4 preview",
+            ):
+                self.assertIn(marker, readme, relative)
         evals = read("tests/model-evals/README.md")
         for marker in (
             "## 验证等级",
